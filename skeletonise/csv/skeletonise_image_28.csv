@@ -1,0 +1,8 @@
+Node1_ID,Coord1,Node2_ID,Coord2,Distance,End_point,E_Coord,E_Distance
+1,"(44,273)",null,null,null,A,"(0,135)",144.84474
+2,"(66,992)",null,null,null,E,"(72,1126)",134.13426
+3,"(126,566)",null,null,null,D,"(37,622)",105.15227
+4,"(643,57)",null,null,null,[,"(404,88)",241.00207
+5,"(660,925)",null,null,null,a,"(529,1034)",170.41714
+6,"(716,291)",null,null,null,`,"(492,297)",224.08034
+7,"(843,271)",null,null,null,v,"(836,587)",316.07752
