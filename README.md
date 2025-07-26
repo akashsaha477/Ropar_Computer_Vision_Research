@@ -1,51 +1,49 @@
-🦴 TABULATOR: Bone Topology Analysis and Segmentation
-🚀 Introduction
-This project introduces TABULATOR, a powerful tool for the detailed analysis of bone topology through advanced image segmentation. The TABULATOR notebook is engineered to process bone scan images, meticulously identifying and quantifying key structural features. By calculating essential metrics such as bone length, volume, and connectivity, it provides a robust framework for in-depth analysis. This tool is invaluable for researchers, medical professionals, and data scientists who require precise, quantitative insights into bone architecture from medical imaging data.
+# 🦴 TABULATOR: Bone Topology Analysis and Segmentation
 
-✨ Features
-🖼️ Image Preprocessing: Resizes and converts images into a high-contrast binary format, preparing them for detailed analysis.
+## 🚀 Introduction
 
-💀 Skeletonization: Implements the skeletonize function from scikit-image to reduce bone structures to their essential topological skeleton.
+**TABULATOR** is a robust tool for detailed bone topology analysis using advanced image segmentation techniques. Designed for researchers, clinicians, and data scientists, it processes bone scan images to identify and quantify key structural features—delivering precise, quantitative insights into bone architecture from medical imaging data.
 
-📍 Node and Endpoint Detection: Pinpoints critical structural points, including junctions (find_nodes) and terminations (find_endpoints), within the bone's skeleton.
+---
 
-🔗 Topological Analysis: Goes beyond simple measurements by calculating Euclidean distances between nodes and intelligently matching endpoints to their nearest nodes.
+## ✨ Features
 
-📐 Geometric Measurements: Computes the volume of individual bone fragments and fits ellipses to provide an estimation of bone thickness and geometry.
+- **🖼️ Image Preprocessing:** Resizes and converts images to high-contrast binary format for optimal analysis.
+- **💀 Skeletonization:** Uses scikit-image’s `skeletonize` to reduce bone structures to their essential topological skeleton.
+- **📍 Node & Endpoint Detection:** Detects critical points—junctions (`find_nodes`) and terminations (`find_endpoints`)—within the skeleton.
+- **🔗 Topological Analysis:** Calculates Euclidean distances between nodes and matches endpoints to their nearest nodes.
+- **📐 Geometric Measurements:** Computes bone fragment volumes and fits ellipses to estimate thickness and geometry.
+- **📊 Data Export:** Saves all extracted data as CSV files for further statistical analysis.
+- **🎨 Advanced Visualization:** Generates annotated images showing skeletons, nodes, endpoints, and fitted shapes.
 
-📊 Data Export: Systematically saves all extracted data into CSV files, ready for statistical analysis and further research.
+---
 
-🎨 Advanced Visualization: Generates richly annotated images that clearly display the results, including skeletons, nodes, endpoints, and fitted circles and ellipses.
+## ⚙️ Workflow Overview
 
-⚙️ How It Works
-The notebook follows a sequential pipeline to analyze bone topology:
+1. **Image Loading & Preprocessing:**  
+   Load a TIFF image, resize to standard dimensions, and convert to binary using thresholding.
 
-Image Loading and Preprocessing: The process begins by loading a TIFF image and resizing it to a standard dimension. It is then converted to a binary image using a threshold, which separates the bone from the background.
+2. **Skeletonization:**  
+   Create a one-pixel-wide skeleton representation for accurate node and endpoint detection.
 
-Skeletonization: The binary image is skeletonized to create a one-pixel-wide representation of the bone structure. This is crucial for accurately identifying nodes and endpoints.
+3. **Feature Detection:**  
+   - **Nodes:** Junctions (pixels with ≥3 neighbors) via convolution.
+   - **Endpoints:** Terminations (pixels with 1 neighbor).
 
-Feature Detection:
+4. **Topological & Geometric Analysis:**  
+   - Calculate Euclidean distances between nodes.
+   - Compute geodesic radius at each node (local bone thickness).
+   - Fit ellipses to endpoint pairs to model bone segment shape and orientation.
 
-Nodes: Junction points in the skeleton, where three or more branches meet, are identified using convolution to count neighboring pixels.
+5. **Data Aggregation & Export:**  
+   Compile node coordinates, endpoint locations, distances, and ellipse parameters into CSV files.
 
-Endpoints: The ends of bone branches are detected by finding pixels with only one neighbor.
+---
 
-Topological and Geometric Analysis:
+## 💻 Key Functions
 
-The notebook calculates the Euclidean distance between connected nodes.
-
-It also computes the geodesic radius for each node, which helps in understanding the local thickness of the bone.
-
-Ellipses are fitted to endpoint pairs to model the shape and orientation of bone segments.
-
-Data Aggregation and Export: All the calculated data—including node coordinates, endpoint locations, distances, and ellipse parameters—is compiled and saved to CSV files for easy access and analysis.
-
-💻 Code Highlights
-Here are a few key functions from the notebook that drive the analysis:
-
-Node Detection
-Nodes are identified as pixels with three or more neighbors in the skeletonized image. This is achieved using convolution:
-
+```python
+# Node Detection
 def find_nodes(skel: np.ndarray) -> List[Tuple[int, int]]:
     deg = neighbour_count(skel)
     node_mask = (skel == 1) & (deg >= 3)
@@ -53,82 +51,81 @@ def find_nodes(skel: np.ndarray) -> List[Tuple[int, int]]:
     centroids = center_of_mass(node_mask, lbl, range(1, n_comp + 1))
     return [(int(round(r)), int(round(c))) for r, c in centroids]
 
-Endpoint Detection
-Endpoints are pixels with exactly one neighbor, marking the end of a bone branch:
-
+# Endpoint Detection
 def find_endpoints(skel: np.ndarray) -> List[Tuple[int, int]]:
     deg = neighbour_count(skel)
     return [tuple(p) for p in np.argwhere((skel == 1) & (deg == 1))]
 
-Geodesic Radius Calculation
-The geodesic radius at a node is determined using the distance transform on the binary image:
-
+# Geodesic Radius Calculation
 def geodesic_radius(binary_img, node):
     mask = (binary_img > 0).astype(np.uint8)
     dist = distance_transform_edt(mask)
     y, x = node
     return dist[y, x]
+```
 
-📋 Dependencies
-This project relies on the following Python libraries:
+---
 
-numpy
+## 📦 Dependencies
 
-opencv-python
+- numpy
+- opencv-python
+- scipy
+- pandas
+- scikit-image
+- seaborn
+- matplotlib
 
-scipy
+---
 
-pandas
+## 🛠️ Installation
 
-scikit-image
-
-seaborn
-
-matplotlib
-
-📦 Installation
-To set up the project, clone this repository and install the required dependencies:
-
+```bash
 git clone <your-repository-url>
 cd <your-repository-name>
 pip install numpy opencv-python scipy pandas scikit-image seaborn matplotlib
+```
 
-🚀 Usage
-Set Input Image Path: In the notebook, update the input_image variable with the path to your TIFF image file.
+---
 
-Execute the Notebook: Run the cells in the Jupyter Notebook in order.
+## 🚀 Usage
 
-Save Intermediate Images (Optional): You can choose to save the resized and binary images when prompted.
+1. **Set Input Image Path:**  
+   Update the `input_image` variable in the notebook with your TIFF image path.
 
-Review the Outputs: All generated files, including annotated images and CSV data, will be saved in the Single_image/ directory.
+2. **Run the Notebook:**  
+   Execute all cells in order.
 
-📂 Output Files
-The analysis produces a comprehensive set of output files in the Single_image/ directory:
+3. **(Optional) Save Intermediate Images:**  
+   Choose to save resized and binary images when prompted.
 
-resize_image.png: The resized input image.
+4. **Review Outputs:**  
+   All results (annotated images, CSV data) are saved in the `Single_image/` directory.
 
-binary_image.png: The binary version of the image.
+---
 
-skeleton_image.png: The skeletonized representation of the bone structures.
+## 📂 Output Files
 
-node_image.png: Image with annotated nodes and endpoints.
+- `resize_image.png` — Resized input image
+- `binary_image.png` — Binary version of the image
+- `skeleton_image.png` — Skeletonized bone structures
+- `node_image.png` — Annotated nodes and endpoints
+- `node_image.csv` — Data on detected nodes, endpoints, and connections
+- `circle_image.png` — Circles fitted to detected nodes
+- `circle_image.csv` — Data on fitted circles
+- `ellipse_image.png` — Ellipses fitted to bone structures
+- `ellipse_image.csv` — Data on fitted ellipses
+- `volume.csv` — Volume of each detected bone shape
+- `summary.csv` — Summary of analysis results
 
-node_image.csv: Data on detected nodes, endpoints, and their connections.
+---
 
-circle_image.png: Image with circles fitted to the detected nodes.
+## 🤝 Contributing
 
-circle_image.csv: Data on the fitted circles.
+Contributions are welcome! Please submit a pull request or open an issue to discuss improvements.
 
-ellipse_image.png: Image with ellipses fitted to bone structures.
+---
 
-ellipse_image.csv: Data on the fitted ellipses.
+## 📜 License
 
-volume.csv: The volume of each detected bone shape.
-
-summary.csv: A summary of the analysis results.
-
-🤝 Contributing
-Contributions are highly encouraged! Please submit a pull request or open an issue to discuss potential improvements.
-
-📜 License
-This project is licensed under the MIT License. See the LICENSE file for more details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for
