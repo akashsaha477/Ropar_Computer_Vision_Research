@@ -11,6 +11,6 @@ def overlay_skeleton_nodes(img_gray: np.ndarray, skel: np.ndarray, nodes: List[T
         cv.putText(out, str(node_id), (c + 6, r - 6), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
     for idx, (r, c) in enumerate(endpoints):
         cv.circle(out, (c, r), 3, (255, 0, 0), -1)
-        label = chr(ord('A') + idx)
+        label = f"e{idx}"
         cv.putText(out, label, (c + 6, r - 6), cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1)
     return out

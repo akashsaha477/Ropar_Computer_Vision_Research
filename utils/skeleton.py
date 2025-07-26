@@ -31,14 +31,15 @@ def Core_code(imput_image, output_csv, output_image):
             d = euclidean_distance((er, ec), (nr, nc))
             if d < min_dist:
                 min_dist, nearest = d, i
-        endpoint_distances.append((nearest + 1, nodes[nearest], chr(ord('A') + idx), (er, ec), min_dist))
-        used_node_ids.add(nearest + 1)
+        if nearest != -1:
+            endpoint_distances.append((nearest + 1, nodes[nearest], f"e{idx}", (er, ec), min_dist))
+            used_node_ids.add(nearest + 1)
 
     connected_node_ids = {i for i, *_ in distances}
     with open(output_csv, 'w', newline='', encoding='utf-8') as f:
         w = csv.writer(f)
         w.writerow(['Node1_ID', 'Coord1', 'Node2_ID', 'Coord2', 'Distance', 'End_point', 'E_Coord', 'E_Distance'])
-        for i, r1, c1, j, r2, c2, d in distances:
+        for (i, r1, c1, j, r2, c2, d) in distances:
             match = next((ep for ep in endpoint_distances if ep[0] == i), None)
             if match:
                 _, _, label, (er, ec), ed = match
@@ -54,3 +55,6 @@ def Core_code(imput_image, output_csv, output_image):
 
     out_img = overlay_skeleton_nodes(img_gray, skel, nodes, endpoints)
     cv.imwrite(output_image, out_img)
+
+    return out_img
+
